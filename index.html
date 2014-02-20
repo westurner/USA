@@ -1,0 +1,159 @@
+<html>
+<head>
+  <title>Flag of the United States of America</title>
+  <!--
+  <script
+      src="processing-1.4.1.js"
+      type="text/javascript"
+      ></script>
+    -->
+  <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.1/processing.min.js"
+      type="text/javascript"
+      ></script>
+  <style type="text/css">
+    * { margin: 0; padding: 0; }
+  </style>
+</head>
+<body role="document">
+<div id="main" role="main">
+    <canvas id="flagcanvas"></canvas>
+</div>
+
+<script type="text/processing" data-processing-target="flagcanvas">
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+
+void setup() {
+  size(width, height);
+  background(255);
+  fill(0);
+  noLoop();
+}
+/**
+* @class
+* @classdesc A draw-able Flag (with Processing)
+*
+* @constructor
+* @desc Constructs a Flag instance
+* @this {Flag}
+* @param {number} x Starting x-coordinate
+* @param {number} y Starting y-coordinate
+* @param {number} width Width of Flag to draw
+* @see https://en.wikipedia.org/wiki/Flag_of_the_United_States
+*
+*/ 
+var Flag = function(x, y, width) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = width * (1 / 1.9);  
+
+  this.stripeHeight = this.height / 13;
+
+  this.blueWidth = this.width * (2/5);
+  this.blueHeight = this.stripeHeight * 7 ;
+  this.starSize = this.stripeHeight * (4/5);
+
+  return this;
+};
+
+
+Flag.prototype._drawStripes = function() {
+  for (var i = 0; i < 13; i++) {
+    if (i%2 === 1) {
+      fill(255, 255, 255);
+    } else {
+      fill(0.698*255, 0.132*255, 0.203*255);
+    }
+    rect(this.x, this.y + (i*this.stripeHeight), this.width, this.stripeHeight);
+  }
+};
+
+Flag.prototype._drawBlue = function() {
+  fill(0.234*255, 0.233*255, 0.430*255);
+  rect(this.x, this.y, this.blueWidth, this.stripeHeight * 7);
+};
+
+Flag.prototype._drawBlueGrid = function() {
+  fill(0, 0, 120);
+  var xPadding = (this.blueWidth / 12);
+  var yPadding = (this.blueHeight / 10);
+  for (var i = 0; i < 10; i++) {
+    for (var j = 0; j < 12; j++) {
+      rect(j*xPadding, i*yPadding, xPadding, yPadding);
+    }
+  }
+};
+
+/**
+* @desc Draw a star with Processing beginShape and vertex
+* @param {number} x x-coordinate
+* @param {number} y y-coordinate
+* @param {number} w width
+*/
+drawStar = function(x, y, w) {
+  // TODO
+  fill(255, 255, 255);
+  x = x - (w/2);
+  y = y - (w/2);
+  beginShape();
+  vertex(x+w*1/2, y);       // A
+  vertex(x+w*2/3, y+w*1/3); // B
+  vertex(x+w,     y+w*1/3); // C
+  vertex(x+w*2/3, y+w*1/2); // D
+  vertex(x+w,     y+w);     // E
+  vertex(x+w*1/2, y+w*2/3); // F
+  vertex(x,       y+w);     // G
+  vertex(x+w*1/3, y+w*1/2); // H
+  vertex(x,       y+w*1/3); // I
+  vertex(x+w*1/3, y+w*1/3); // J
+  endShape();
+};
+
+Flag.prototype._drawStars = function() {
+  var halfWidth = (this.starSize / 2);
+  var halfHeight = (this.starSize / 2);
+  var xPadding = (this.blueWidth / 12);
+  var yPadding = (this.blueHeight / 10);
+
+  for (var i = 1; i < 10; i++) {
+    var isOffset = (i%2 !== 1);
+    var starsInRow = 5 + (i%2);
+    var y = this.y + (i*yPadding);
+    for (var j = 1; j <= starsInRow; j++) {
+      var x = this.x + (j*xPadding*2) - (halfWidth*2) + (xPadding*isOffset);
+      console.log(x,y);
+      drawStar(x, y, this.starSize);
+    }
+  }
+};
+
+/**
+* @desc Draw the Flag stripes, canton, and stars
+*
+*/
+Flag.prototype.draw = function() {
+  noStroke();
+  this._drawStripes();
+  this._drawBlue();
+  //this._drawBlueGrid();
+  this._drawStars();
+};
+
+void draw() {
+  var _height = 0;
+  for (var j = 1; j < 2; j++) {
+    var _w = width / j;
+    var _flag;
+    for (var i = 0; i < j; i++) {
+      _flag = new Flag(i*_w, _height, _w);
+      _flag.draw();
+    }
+    _height += _flag.height;
+  }
+};
+</script>
+</body>
+</html>
