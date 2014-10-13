@@ -2,7 +2,7 @@ USA
 ====
 Flag of the United States of America
 
-http://westurner.github.io/USA/
+https://westurner.github.io/USA/
 
 
 References
